@@ -1,0 +1,8 @@
+#!/bin/sh
+
+gist -u 2bb7ad9bf2034f851cad7c0dc3078176 /home/asadik/.vimrc 
+gist -u c34428915edbee1277b1a44ecf01c3de /home/asadik/.zshrc
+gist -u 426edd450448255d8b2f624ba5a27f47 /home/asadik/.config/i3/config
+gist -u d785dd06f4c489cd786e1911ba261dd7 /home/asadik/.config/redshift.conf
+
+# let's add some other backups

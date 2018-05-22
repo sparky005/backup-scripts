@@ -1,0 +1,1 @@
+0 * * * * /etc/cron.hourly/1gist_backup >/tmp/config_backup.log 2>&1
