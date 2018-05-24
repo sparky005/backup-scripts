@@ -15,7 +15,7 @@ last_backup_date=$(borg list --last 1 $REPO | cut -f1 -d' ' | grep -E "[0-9]{4}-
 today=$(date +%Y-%m-%d)
 
 if [ "$last_backup_date" != "$today" ]; then
-    notify-send "Starting backup" --urgency=normal --icon=dialog-information
+    notify-send "Backups" "Starting Backup" -t 60000 --urgency=normal --icon=dialog-warning
     borg create --stats -v                      \
         $REPO::'{hostname}-{now:%Y-%m-%d}'      \
         /home/asadik                            \
@@ -26,7 +26,7 @@ if [ "$last_backup_date" != "$today" ]; then
     # prune to remove old backups
     borg prune -v --stats --list $REPO --prefix '{hostname}-' \
         --keep-daily=7 --keep-weekly=4 --keep-monthly=6
-    notify-send "Backup finished" --urgency=normal --icon=dialog-information
+    notify-send "Backup Status" "Backup finished" -t 60000 --urgency=normal --icon=dialog-information
 else
     echo "Backup already done today."
 fi
@@ -44,7 +44,8 @@ echo "Uploading..."
 aws s3 sync $REPO s3://peterpanda2-backups --storage-class STANDARD_IA
 rc=$?
 if [ $rc != 0 ]; then
-    notify-send "AWS sync failed" --urgency=normal --icon=dialog-information
+    notify-send "AWS Sync Status" "FAILED" -t 60000 --urgency=normal --icon=dialog-error
 else
+    notify-send "AWS Sync Status" "Complete!" -t 60000 --urgency=normal --icon=dialog-information
     echo "Done!"
 fi
