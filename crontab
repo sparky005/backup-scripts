@@ -1,2 +1,2 @@
-0 * * * * /etc/cron.hourly/1gist_backup >/tmp/config_backup.log 2>&1
-30 * * * * /etc/cron.hourly/2backup >/tmp/backup.log 2>&1
+0 * * * * /etc/cron.hourly/1gist_backup >/var/log/custom_backups/config_backup.log 2>&1
+30 * * * * /etc/cron.hourly/2backup >>/var/log/custom_backups/backup.log 2>&1
