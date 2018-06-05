@@ -21,6 +21,7 @@ if [ "$last_backup_date" != "$today" ]; then
         /home/asadik                            \
         --exclude '/home/asadik/.borg_backup'   \
         --exclude '/home/asadik/.local'         \
+        --exclude '/home/asadik/backup_exclusions'         \
         --exclude '/home/asadik/.cache'
 
     # prune to remove old backups
