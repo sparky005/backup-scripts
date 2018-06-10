@@ -51,7 +51,7 @@ if [[ $speed -gt 200 ]] || [[ $speed -lt 5 ]]; then
     exit
 fi
 echo "Uploading..."
-aws s3 sync $REPO s3://peterpanda2-backups --storage-class STANDARD_IA
+aws s3 sync $REPO s3://peterpanda2-backups --storage-class STANDARD_IA --delete
 rc=$?
 if [ $rc != 0 ]; then
     notify-send "AWS Sync Status" "FAILED" -t 60000 --urgency=normal --icon=dialog-error
