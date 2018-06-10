@@ -41,6 +41,15 @@ if [ "$networkname" == '715 - CR∑∑KS' ]; then
     echo "Connected to phone, not uploading to aws"
     exit
 fi
+# check if our connection sucks
+# or if it's too good to be true
+speed=$(ping amazonaws.com -c 1 | sed -n 2p | cut -f4 -d'=' | cut -f1 -d' ' | cut -f1 -d'.')
+if [[ $speed -gt 200 ]] || [[ $speed -lt 5 ]]; then
+    # bad connection
+    # bail
+    echo "Connection speed is too slow ($speed)! Bailing"
+    exit
+fi
 echo "Uploading..."
 aws s3 sync $REPO s3://peterpanda2-backups --storage-class STANDARD_IA
 rc=$?
