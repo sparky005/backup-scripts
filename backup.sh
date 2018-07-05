@@ -16,7 +16,7 @@ today=$(date +%Y-%m-%d)
 
 if [ "$last_backup_date" != "$today" ]; then
     notify-send "Backups" "Starting Backup" -t 60000 --urgency=normal --icon=dialog-warning
-    borg create --stats -v                      \
+    borg create --compression zstd,9 --stats -v                      \
         $REPO::'{hostname}-{now:%Y-%m-%d}'      \
         /home/asadik                            \
         --exclude '/home/asadik/.borg_backup'   \
@@ -48,6 +48,11 @@ if [[ $speed -gt 200 ]] || [[ $speed -lt 5 ]]; then
     # bad connection
     # bail
     echo "Connection speed is too slow ($speed)! Bailing"
+    exit
+fi
+# make sure upload isn't already running
+if pidof -x aws >/dev/null; then
+    echo "Backup already running"
     exit
 fi
 echo "Uploading..."
