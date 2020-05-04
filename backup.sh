@@ -11,7 +11,7 @@ if pidof -x borg >/dev/null; then
 fi
 
 # get last backup name to see if it was done today
-last_backup_date=$(borg list --last 1 $REPO | cut -f1 -d' ' | grep -E "[0-9]{4}-[0-9]{2}-[0-9]{2}" -o)
+last_backup_date=$(borg list --last 1 $REPO | cut -f1 -d' ' | grep -v "checkpoint" | grep -E "[0-9]{4}-[0-9]{2}-[0-9]{2}" -o)
 today=$(date +%Y-%m-%d)
 
 if [ "$last_backup_date" != "$today" ]; then
@@ -21,12 +21,13 @@ if [ "$last_backup_date" != "$today" ]; then
         /home/asadik                            \
         --exclude '/home/asadik/.borg_backup'   \
         --exclude '/home/asadik/.local'         \
+        --exclude '/home/asadik/Dropbox'         \
         --exclude '/home/asadik/backup_exclusions'         \
         --exclude '/home/asadik/.cache'
 
     # prune to remove old backups
     borg prune -v --stats --list $REPO --prefix '{hostname}-' \
-        --keep-daily=7 --keep-weekly=4 --keep-monthly=6
+        --keep-daily=7 --keep-weekly=4 --keep-monthly=3
     notify-send "Backup Status" "Backup finished" -t 60000 --urgency=normal --icon=dialog-information
 else
     echo "Backup already done today."
@@ -52,11 +53,11 @@ if [[ $speed -gt 200 ]] || [[ $speed -lt 5 ]]; then
 fi
 # make sure upload isn't already running
 if pidof -x aws >/dev/null; then
-    echo "Backup already running"
+    echo "Upload already running"
     exit
 fi
 echo "Uploading..."
-aws s3 sync $REPO s3://peterpanda2-backups --storage-class STANDARD_IA --delete
+aws s3 sync --quiet $REPO s3://peterpanda2-backups --storage-class STANDARD_IA --delete
 rc=$?
 if [ $rc != 0 ]; then
     notify-send "AWS Sync Status" "FAILED" -t 60000 --urgency=normal --icon=dialog-error
